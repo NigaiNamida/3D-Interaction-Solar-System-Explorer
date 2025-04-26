@@ -1,7 +1,61 @@
 *{
+  background-color: black;
   width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: black;
+  font-family: system-ui;;
+}
+
+.navbar {
+  color: white;
+  background: rgb(5, 5, 5);
+  display: flex;
+  width: 100%;
+  height: 60px;
+  position: absolute;
+  align-items: center;
+  z-index: 10;
+  font-size: 20px;
+}
+
+.navname {
+  color: white;
+  background: rgb(5, 5, 5);
+  text-align: center;
+  font-weight: bold;
+}
+
+.reset-button,
+.toggle-button {
+  color: white;
+  background: rgb(15, 15, 15);
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+.reset-button:hover,
+.toggle-button:hover {
+  background: rgb(30, 30, 30);
+}
+
+.speed-slider {
+  color: white;
+  background: rgb(5, 5, 5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  font-size: 20px;
+}
+
+.speed-value{
+  background: rgb(5, 5, 5);
+}
+
+.speed-slider input[type="range"] {
+  width: 90%;
+  cursor: pointer;
 }

@@ -1,67 +1,154 @@
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { FirstPersonControls } from "@react-three/drei";
-import './App.css'
-import { useRef, Suspense  } from 'react'
-import { TextureLoader } from 'three'
+import { Canvas, useLoader } from '@react-three/fiber';
+import { Suspense, useRef, useState} from 'react';
+import { TextureLoader, Vector3 } from 'three';
+import { gsap } from 'gsap';
+import './App.css';
 
-const Planet = ({position, size, colorMap, rotationalSpeed}) => {
-  
-  const ref = useRef()
-  useFrame((state, delta) => {
-    ref.current.rotation.y += delta * rotationalSpeed
-  })
-
-  return (
-      <mesh position = {position} ref = {ref}> 
-        <sphereGeometry args = {size}/>
-        <meshStandardMaterial map = {colorMap}/>
-      </mesh>
-  )
-}
-
-const Sun = ({position, size, colorMap, rotationalSpeed}) => {
-  
-  const ref = useRef()
-  useFrame((state, delta) => {
-    ref.current.rotation.y += delta * rotationalSpeed
-  })
-
-  return (
-      <mesh position = {position} ref = {ref}> 
-        <sphereGeometry args = {size}/>
-        <meshBasicMaterial map = {colorMap}/>
-      </mesh>
-  )
-}
-
-const Camera = () => {}
+import Camera from './components/Camera';
+import Sun from './components/Sun';
+import Planet from './components/Planet';
 
 const App = () => {
 
-  const sunMap = useLoader(TextureLoader, 'sun-texture.jpg')
-  const mercuryMap = useLoader(TextureLoader, 'mercury-texture.jpg')
-  const venusMap = useLoader(TextureLoader, 'venus-texture.jpg')
-  const earthMap = useLoader(TextureLoader, 'earth-texture.jpg')
-  const rotationalScale = 0.5
-  const baseScale = 0.1
+  const sunMap = useLoader(TextureLoader, 'sun-texture.jpg');
+  const mercuryMap = useLoader(TextureLoader, 'mercury-texture.jpg');
+  const venusMap = useLoader(TextureLoader, 'venus-texture.jpg');
+  const earthMap = useLoader(TextureLoader, 'earth-texture.jpg');
+
+  const cameraRef = useRef();
+  const controlsRef = useRef();
+  const resetTween = useRef(null);
+  const [isResetting, setIsResetting] = useState(false);
+  
+  const [orbitalRingVisibility, setOrbitalRingVisibility] = useState(true);
+
+  const [speed, setSpeed] = useState(1);
+  const speedOptions = [-500, -200, -100, -50, -20, -10, -5, -2, -1, 0, 1, 2, 5, 10, 20, 50, 100, 200, 500];
+  
+  const baseScale = 0.15;
+
+  const handleResetCamera = () => {
+    if (cameraRef.current && controlsRef.current) {
+
+      //Stop ressetting when interrupted
+      if (resetTween.current) {
+        resetTween.current.kill();
+      }
+  
+      setIsResetting(true);
+  
+      const tl = gsap.timeline({
+        onUpdate: () => {
+          controlsRef.current.update();
+        },
+        onComplete: () => {
+          setIsResetting(false);
+        }
+      });
+  
+      tl.to(cameraRef.current.position, {
+        x: 0,
+        y: 10,
+        z: 30,
+        duration: 1.5,
+        ease: 'power2.out',
+      }, 0)
+  
+      .to(controlsRef.current.target, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 1.5,
+        ease: 'power2.out',
+      }, 0);
+  
+      resetTween.current = tl;
+    }
+  };
+
+  const handleToggleOrbitalRing = () => {
+    setOrbitalRingVisibility((prev) => !prev);
+  };
 
   return (
-    <Canvas>
-      <Suspense fallback={null}>
-        <FirstPersonControls/>
-        <directionalLight position={[-10, 0, 0]} intensity={5}/>
-        <ambientLight intensity={0.5}/>
+    <div>
+      <nav className="navbar">
+        <span className="navname">☀️ 3D Interactive Solar System Explorer</span>
+        <button className="reset-button" onClick={handleResetCamera}>
+          {isResetting ? 'Resetting...' : 'Reset Camera'}  
+        </button>
+        <button className="toggle-button" onClick={handleToggleOrbitalRing}>
+          {orbitalRingVisibility ? 'Hide Orbital Rings' : 'Show Orbital Rings'}
+        </button>
+        <div className="speed-slider">
+          <span className="speed-value">Speed x{speed}</span>
+          <input 
+            type="range" 
+            min="0" 
+            max={speedOptions.length - 1} 
+            step="1" 
+            value={speedOptions.indexOf(speed)}
+            onChange={(e) => setSpeed(speedOptions[parseInt(e.target.value)])}
+          />
+        </div>
+      </nav>
+            
+      <Canvas>
+        <Camera 
+          cameraRef={cameraRef} 
+          controlsRef={controlsRef} 
+          onUserControlStart={() => {
+            if (resetTween.current) {
+              resetTween.current.kill();
+              resetTween.current = null;
+            }
+            setIsResetting(false);
+          }}
+        />
 
-        <Sun position = {[0, 1, 0]} size = {[baseScale * 10, 64, 64]} colorMap = {sunMap} rotationalSpeed = {rotationalScale * 0.04}/>
+        <pointLight position={[0, 0, 0]} intensity={1000} />
+        <ambientLight intensity={0.2} />
 
-        <Planet position = {[-2, -1, 0]} size = {[baseScale * 0.38, 64, 64]} colorMap = {mercuryMap} rotationalSpeed = {rotationalScale * 0.017}/>
-        <Planet position = {[0, -1, 0]} size = {[baseScale * 0.95, 64, 64]} colorMap = {venusMap} rotationalSpeed = {rotationalScale * -0.0041}/>
-        <Planet position = {[2, -1, 0]} size = {[baseScale * 1, 64, 64]} colorMap = {earthMap} rotationalSpeed = {rotationalScale * 1}/>
+        <Suspense fallback={null}>
+          
+          {/* Sun */}
+          <Sun size={baseScale * 10} 
+            textureMap={sunMap} 
+            speed={speed} 
+            rotationalScale={0.04}/>
 
-      </Suspense>
-    </Canvas>
-  )
-}
+          {/* Mercury */}
+          <Planet size={baseScale * 0.38} 
+            textureMap={mercuryMap} 
+            speed={speed} 
+            rotationalScale={0.017} 
+            orbitalScale={1 / 88} 
+            radius={baseScale * 45} 
+            ring={orbitalRingVisibility}/>
 
+          {/* Venus */}
+          <Planet size={baseScale * 0.95} 
+            textureMap={venusMap} 
+            speed={speed} 
+            rotationalScale={-0.0041} 
+            orbitalScale={1 / 224} 
+            radius={baseScale * 84} 
+            ring={orbitalRingVisibility}/>
 
-export default App
+          {/* Earth */}
+          <Planet size={baseScale * 1} 
+            textureMap={earthMap} 
+            speed={speed} 
+            rotationalScale={1} 
+            orbitalScale={1 / 365} 
+            radius={baseScale * 117} 
+            ring={orbitalRingVisibility}/>
+
+        </Suspense>
+      </Canvas>
+
+    </div>
+  );
+};
+
+export default App;

@@ -1,0 +1,46 @@
+import { useRef, useState } from 'react';
+import { useThree, useFrame } from '@react-three/fiber';
+import { useCursor } from '@react-three/drei';
+
+const Sun = ({ size, textureMap, speed, rotationalScale }) => {
+    const ref = useRef();
+    const ringRef = useRef();
+    const [hovered, setHovered] = useState(false);
+    const [active, setActive] = useState(false);
+    const { camera } = useThree();
+
+    useCursor(hovered);
+
+    useFrame((state, delta) => {
+        if (speed !== 0) {
+        ref.current.rotation.y += delta * rotationalScale * speed;
+        }
+        if (ringRef.current) {
+        ringRef.current.lookAt(camera.position);
+        }
+    });
+
+    return (
+        <group position={[0, 0, 0]} ref={ref}>
+            {/* Sun mesh */}
+            <mesh
+                onPointerOver={() => setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+                onClick={() => setActive(!active)}
+            >
+                <sphereGeometry args={[size, 64, 64]} />
+                <meshBasicMaterial map={textureMap} />
+            </mesh>
+
+            {/* Highlight when Actived or Hovered */}
+            {(hovered || active) && (
+            <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
+                <torusGeometry args={[size * 1, size * 0.1, 2, 64]} />
+                <meshBasicMaterial color="white" opacity={0.75} transparent />
+            </mesh>
+            )}
+        </group>
+    );
+};
+
+export default Sun;
