@@ -2,12 +2,23 @@ import { useRef, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useCursor } from '@react-three/drei';
 
-const Planet = ({ size, textureMap, speed, rotationalScale, orbitalScale, radius, orbitalRingWidth = 0.015, initialAngle = 0, ring}) => {
+const Planet = ({ 
+  size, 
+  textureMap, 
+  speed, 
+  rotationalScale, 
+  orbitalScale, 
+  radius, 
+  orbitalRingWidth = 0.015, 
+  initialAngle = 0, 
+  ring, 
+  name, 
+  onPlanetClick 
+}) => {
     const ref = useRef();
     const ringRef = useRef();
     const angle = useRef(initialAngle);
     const [hovered, setHovered] = useState(false);
-    const [active, setActive] = useState(false);
     const { camera } = useThree();
 
     useCursor(hovered);
@@ -25,6 +36,17 @@ const Planet = ({ size, textureMap, speed, rotationalScale, orbitalScale, radius
         }
     });
 
+    const handleClick = () => {
+        if (onPlanetClick) {
+            const position = {
+                x: ref.current.position.x,
+                y: ref.current.position.y,
+                z: ref.current.position.z
+            };
+            onPlanetClick(name, position);
+        }
+    };
+
     return (
         <>
             <group ref={ref}>
@@ -32,14 +54,14 @@ const Planet = ({ size, textureMap, speed, rotationalScale, orbitalScale, radius
                 <mesh
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
-                onClick={() => {setActive(!active);}}
+                onClick={handleClick}
                 >
                     <sphereGeometry args={[size, 64, 64]} />
                     <meshStandardMaterial map={textureMap} />
                 </mesh>
 
-                {/* Highlight when Actived or Hovered */}
-                {(hovered || active) && (
+                {/* Highlight when Hovered */}
+                {(hovered) && (
                 <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
                     <torusGeometry args={[size * 1, size * 0.5, 2, 64]} />
                     <meshBasicMaterial color="white" opacity={0.75} transparent />
