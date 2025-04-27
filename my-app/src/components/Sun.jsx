@@ -21,7 +21,7 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick }) => {
 
     const handleClick = () => {
         if (onPlanetClick) {
-            onPlanetClick("Sun", { x: 0, y: 0, z: 0 });
+            onPlanetClick("Sun", { x: 0, y: 0, z: 0 }, size);
         }
     };
 

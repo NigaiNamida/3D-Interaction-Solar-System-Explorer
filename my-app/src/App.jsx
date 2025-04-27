@@ -20,7 +20,7 @@ const App = () => {
   const [isResetting, setIsResetting] = useState(false);
   const [orbitalRingVisibility, setOrbitalRingVisibility] = useState(true);
   const [speed, setSpeed] = useState(1);
-  const [activePlanet, setActivePlanet] = useState(null);
+  const [focusedPlanet, setFocusedPlanet] = useState(null);
   
   const speedOptions = [-500, -200, -100, -50, -20, -10, -5, -2, -1, 0, 1, 2, 5, 10, 20, 50, 100, 200, 500];
   const baseScale = 0.15;
@@ -28,7 +28,7 @@ const App = () => {
   const handleResetCamera = () => {
     if (cameraRef.current && controlsRef.current) {
       setIsResetting(true);
-      setActivePlanet(null);
+      setFocusedPlanet(null);
 
       // Cancel any ongoing animation
       if (resetTween.current) {
@@ -63,9 +63,10 @@ const App = () => {
     }
   };
 
-  const handlePlanetClick = useCallback((name, position) => {
+  const handlePlanetClick = useCallback((name, position, size) => {
     if (cameraRef.current && controlsRef.current) {
-      setActivePlanet(name);
+      setIsResetting(true)
+      setFocusedPlanet(name);
       setSpeed(0);
       
       // Cancel any ongoing animation
@@ -73,11 +74,11 @@ const App = () => {
         resetTween.current.kill();
       }
 
-      const zoomDistance = 0.90;
+      const zoomDistance = 0.95;
       const cameraOffset = {
-        x: position.x * zoomDistance,  
+        x: (position.x - size) * zoomDistance,  
         y: position.y , 
-        z: position.z * zoomDistance 
+        z: (position.z - size) * zoomDistance 
       };
       
       const tl = gsap.timeline({
@@ -152,9 +153,9 @@ const App = () => {
             onChange={(e) => setSpeed(speedOptions[parseInt(e.target.value)])}
           />
         </div>
-        {(activePlanet != null) && (
+        {(focusedPlanet != null) && (
           <div className="active-planet">
-            Viewing: {activePlanet}
+            Viewing: {focusedPlanet}
           </div>
         )}
       </nav>
