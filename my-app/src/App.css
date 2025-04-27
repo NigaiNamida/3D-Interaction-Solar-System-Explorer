@@ -1,44 +1,44 @@
 *{
-  background-color: black;
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: system-ui;;
   overflow: hidden;
+  font-family: system-ui;;
+  background-color: black;
 }
 
 .navbar {
-  color: white;
-  background: rgb(5, 5, 5);
-  border-style: solid;
-  border-color: rgb(45, 45, 45);
   width: 100%;
   height: 5%;
+  z-index: 10;
   display: flex;
   position: absolute;
-  align-items: center;
   text-align: center;
-  z-index: 10;
+  align-items: center;
+  color: white;
+  background: rgb(5, 5, 5);
+  border-color: rgb(45, 45, 45);
+  border-style: solid;
 }
 
 .navname {
-  color: white;
-  background: rgb(5, 5, 5);
+  height: 50%;
   text-align: center;
   font-weight: bold;
   font-size: 17.5px;
-  height: 50%;
+  color: white;
+  background: rgb(5, 5, 5);
 }
 
 .reset-button,
 .toggle-button {
+  cursor: pointer;
+  text-align: center;
+  font-size: 17.5px;
   color: white;
   background: rgb(15, 15, 15);
   border-style: none;
-  text-align: center;
-  font-size: 17.5px;
-  cursor: pointer;
 }
 
 .reset-button:hover,
@@ -47,15 +47,15 @@
 }
 
 .speed-slider {
-  color: white;
-  background: rgb(5, 5, 5);
+  gap: 5px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   text-align: center;
   font-size: 15px;
-  gap: 5px;
+  color: white;
+  background: rgb(5, 5, 5);
 }
 
 .speed-value{
@@ -63,31 +63,55 @@
 }
 
 .speed-slider input[type="range"] {
-  width: 90%;
   cursor: pointer;
+  width: 90%;
 }
 
 .focused-planet{
-  color: white;
-  background: rgb(5, 5, 5);
+  height: 50%;
   text-align: center;
   font-size: 17.5px;
-  height: 50%;
+  color: white;
+  background: rgb(5, 5, 5);
+}
+
+.camera-tip1,
+.camera-tip2,
+.camera-tip3 {
+  pointer-events: none;
+  position: absolute;
+  z-index: 9;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+}
+
+.camera-tip1 {
+  top: 6%;
+  left: 9px;
+}
+
+.camera-tip2 {
+  top: 9%;
+  left: 9px;
+}
+
+.camera-tip3 {
+  top: 12%;
+  left: 9px;
 }
 
 .planet-info-popup {
+  bottom: -20%;;
+  max-height: 7.5%;
+  padding-bottom: 100px;
   position: absolute;
   align-items: center;
   text-align: center;
-  left: 0;
-  right: 0;
-  background-color: rgba(5, 5, 5, 0.8);
   color: white;
-  padding-bottom: 100px;
-  transition: bottom 0.5s ease-in-out;
+  background-color: rgba(5, 5, 5, 0.8);
   box-shadow: 0 -5px 15px rgba(15, 15, 15, 0.5);
-  max-height: 7.5%;
-  bottom: -20%;;
+  transition: bottom 0.5s ease-in-out;
 }
 
 .planet-info-popup.visible {
@@ -95,11 +119,11 @@
 }
 
 .planet-info-popup h2 {
-  color: #30a7ff;
-  font-size: 24px;
   padding-top: 30px;
   text-align: center;
+  font-size: 24px;
   font-weight: 500;
+  color: rgb(50, 160, 255);
 }
 
 .planet-stats {
@@ -109,13 +133,13 @@
 }
 
 .stat {
-  width: 33%;
+  width: 25%;
   display: block;
 }
 
 .label {
   font-weight: 400;
-  color: #aaccff;
+  color: rgb(170, 200, 255);
 }
 
 .value {

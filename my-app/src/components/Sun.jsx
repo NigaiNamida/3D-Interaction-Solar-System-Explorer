@@ -2,20 +2,24 @@ import { useRef, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useCursor } from '@react-three/drei';
 
+import { SOLAR_SYSTEM } from './Data';
+
 const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedPlanet }) => {
-    const ref = useRef();
-    const ringRef = useRef();
-    const [hovered, setHovered] = useState(false);
+    const REF = useRef();
+    const RING_REF = useRef();
+    const [HOVERED, setHovered] = useState(false);
     const { camera } = useThree();
 
-    useCursor(hovered);
+    const { SUN } = SOLAR_SYSTEM;
+
+    useCursor(HOVERED);
 
     useFrame((state, delta) => {
         if (speed !== 0) {
-            ref.current.rotation.y += delta * rotationalScale * speed;
+            REF.current.rotation.y += delta * rotationalScale * speed;
         }
-        if (ringRef.current) {
-            ringRef.current.lookAt(camera.position);
+        if (RING_REF.current) {
+            RING_REF.current.lookAt(camera.position);
         }
     });
 
@@ -26,24 +30,37 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedP
     };
 
     return (
-        <group position={[0, 0, 0]} ref={ref}>
+        <group position={[0, 0, 0]} ref={REF}>
+
             {/* Sun mesh */}
+
             <mesh
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
                 onClick={handleClick}
             >
-                <sphereGeometry args={[size, 64, 64]} />
-                <meshBasicMaterial map={textureMap} />
+
+                <sphereGeometry args={[size, SUN.GEOMETRY_SEGMENTS, SUN.GEOMETRY_SEGMENTS]}/>
+                <meshBasicMaterial map={textureMap}/>
+
             </mesh>
 
             {/* Highlight when Hovered */}
-            {(hovered || focusedPlanet === "Sun") && (
-            <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
-                <torusGeometry args={[size * 1, size * 0.1, 2, 64]} />
-                <meshBasicMaterial color="lightblue"/>
+            
+            {(HOVERED || focusedPlanet === "Sun") && (
+            <mesh rotation={[Math.PI / 2, 0, 0]} ref={RING_REF}>
+
+                <torusGeometry args={[
+                    size * SUN.HIGHLIGHT_RING.SIZE_MULTIPLIER, 
+                    size * SUN.HIGHLIGHT_RING.THICKNESS_MULTIPLIER, 
+                    SUN.HIGHLIGHT_RING.SEGMENTS.RADIAL, 
+                    SUN.HIGHLIGHT_RING.SEGMENTS.TUBULAR
+                ]}/>
+                <meshBasicMaterial color="gray"/>
+
             </mesh>
             )}
+
         </group>
     );
 };
