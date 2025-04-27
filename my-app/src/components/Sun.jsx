@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useCursor } from '@react-three/drei';
 
-const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick }) => {
+const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedPlanet }) => {
     const ref = useRef();
     const ringRef = useRef();
     const [hovered, setHovered] = useState(false);
@@ -21,7 +21,7 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick }) => {
 
     const handleClick = () => {
         if (onPlanetClick) {
-            onPlanetClick("Sun", { x: 0, y: 0, z: 0 }, size);
+            onPlanetClick("Sun", { x: 0, y: 0, z: 0 }, size, 0, 1);
         }
     };
 
@@ -38,10 +38,10 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick }) => {
             </mesh>
 
             {/* Highlight when Hovered */}
-            {(hovered) && (
+            {(hovered || focusedPlanet === "Sun") && (
             <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
                 <torusGeometry args={[size * 1, size * 0.1, 2, 64]} />
-                <meshBasicMaterial color="white" opacity={0.75} transparent />
+                <meshBasicMaterial color="yellow"/>
             </mesh>
             )}
         </group>

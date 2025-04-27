@@ -1,5 +1,5 @@
 import { Canvas, useLoader } from '@react-three/fiber';
-import { Suspense, useRef, useState, useCallback } from 'react';
+import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
 import { TextureLoader } from 'three';
 import { gsap } from 'gsap';
 import './App.css';
@@ -17,6 +17,12 @@ const App = () => {
   const cameraRef = useRef();
   const controlsRef = useRef();
   const resetTween = useRef(null);
+
+  const [planetPosition, setPlanetPosition] = useState({});
+  const [planetSize, setPlanetSize] = useState({});
+  const [planetAngle, setPlanetAngle] = useState({});
+  const [planetRadius, setPlanetRadius] = useState({});
+
   const [isResetting, setIsResetting] = useState(false);
   const [orbitalRingVisibility, setOrbitalRingVisibility] = useState(true);
   const [speed, setSpeed] = useState(1);
@@ -25,15 +31,41 @@ const App = () => {
   const speedOptions = [-500, -200, -100, -50, -20, -10, -5, -2, -1, 0, 1, 2, 5, 10, 20, 50, 100, 200, 500];
   const baseScale = 0.15;
 
+  const updatePlanetPosition = useCallback((name, position, size, angle, radius) => {
+    setPlanetPosition(prev => ({...prev, [name]: position}));
+    setPlanetSize(prev => ({...prev, [name]: size}));
+    setPlanetAngle(prev => ({...prev, [name]: angle}));
+    setPlanetRadius(prev => ({...prev, [name]: radius}));
+  }, []);
+
+  useEffect(() => {
+    if (cameraRef.current && controlsRef.current && !isResetting && focusedPlanet !== null && focusedPlanet !== "Sun") {
+      
+      const position = planetPosition[focusedPlanet];
+      const angle = planetAngle[focusedPlanet];
+      const radius = planetRadius[focusedPlanet];
+      const size = planetSize[focusedPlanet];
+      
+      cameraRef.current.position.set(
+        Math.cos(angle.current) * (radius + (size / baseScale) * 1.5),  
+        position.y + ((size / baseScale) * 0.5), 
+        Math.sin(angle.current) * (radius + (size / baseScale) * 1.5) 
+      );
+  
+      controlsRef.current.target.set(
+        position.x,
+        position.y,
+        position.z
+      );
+  
+      controlsRef.current.update();
+    }
+  }, [focusedPlanet, isResetting, planetPosition, planetAngle, planetRadius, planetSize, baseScale]);
+
   const handleResetCamera = () => {
-    if (cameraRef.current && controlsRef.current) {
+    if (cameraRef.current && controlsRef.current && !isResetting) {
       setIsResetting(true);
       setFocusedPlanet(null);
-
-      // Cancel any ongoing animation
-      if (resetTween.current) {
-        resetTween.current.kill();
-      }
   
       const tl = gsap.timeline({
         onUpdate: () => {
@@ -48,14 +80,14 @@ const App = () => {
         x: 0,
         y: 10,
         z: 30,
-        duration: 1.8,
+        duration: 1.5,
         ease: 'power2.inOut',
       }, 0)
       .to(controlsRef.current.target, {
         x: 0,
         y: 0,
         z: 0,
-        duration: 1.8,
+        duration: 1.5,
         ease: 'power2.inOut',
       }, 0);
   
@@ -63,22 +95,16 @@ const App = () => {
     }
   };
 
-  const handlePlanetClick = useCallback((name, position, size) => {
+  const handlePlanetClick = useCallback((name, position, size, angle, radius) => {
     if (cameraRef.current && controlsRef.current) {
-      setIsResetting(true)
+      setIsResetting(true);
       setFocusedPlanet(name);
       setSpeed(0);
-      
-      // Cancel any ongoing animation
-      if (resetTween.current) {
-        resetTween.current.kill();
-      }
 
-      const zoomDistance = 0.95;
       const cameraOffset = {
-        x: (position.x - size) * zoomDistance,  
-        y: position.y , 
-        z: (position.z - size) * zoomDistance 
+        x: Math.cos(angle.current) * (radius + (size / baseScale) * 1.5),  
+        y: position.y + ((size / baseScale) * 0.5), 
+        z: Math.sin(angle.current) * (radius + (size / baseScale) * 1.5) 
       };
       
       const tl = gsap.timeline({
@@ -93,17 +119,17 @@ const App = () => {
       
       if (name === "Sun") {
         tl.to(cameraRef.current.position, {
-          x: position.x + 5,
-          y: position.y,
-          z: position.z + 5,
-          duration: 1.8,
+          x: position.x,
+          y: position.y + 2.5,
+          z: position.z + 7.5,  
+          duration: 1.5,
           ease: 'power2.inOut',
         }, 0)
         .to(controlsRef.current.target, {
           x: position.x,
           y: position.y,
           z: position.z,
-          duration: 1.8,
+          duration: 1.5,
           ease: 'power2.inOut',
         }, 0);
       }
@@ -112,14 +138,14 @@ const App = () => {
           x: cameraOffset.x,
           y: cameraOffset.y,
           z: cameraOffset.z,
-          duration: 1.8,
+          duration: 1.5,
           ease: 'power2.inOut',
         }, 0)
         .to(controlsRef.current.target, {
           x: position.x,
           y: position.y,
           z: position.z,
-          duration: 1.8,
+          duration: 1.5,
           ease: 'power2.inOut',
         }, 0);
       }
@@ -137,7 +163,7 @@ const App = () => {
       <nav className="navbar">
         <span className="navname">☀️ 3D Interactive Solar System Explorer</span>
         <button className="reset-button" onClick={handleResetCamera}>
-          {isResetting ? 'Resetting...' : 'Reset Camera'}  
+          {isResetting ? 'Camera\'s Moving...' : 'Reset Camera'}  
         </button>
         <button className="toggle-button" onClick={handleToggleOrbitalRing}>
           {orbitalRingVisibility ? 'Hide Orbital Rings' : 'Show Orbital Rings'}
@@ -153,11 +179,9 @@ const App = () => {
             onChange={(e) => setSpeed(speedOptions[parseInt(e.target.value)])}
           />
         </div>
-        {(focusedPlanet != null) && (
-          <div className="active-planet">
-            Viewing: {focusedPlanet}
-          </div>
-        )}
+        <div className="focused-planet">
+          Viewing : {focusedPlanet === null ? 'None' : focusedPlanet}
+        </div>
       </nav>
             
       <Canvas>
@@ -170,6 +194,7 @@ const App = () => {
               resetTween.current = null;
             }
             setIsResetting(false);
+            setFocusedPlanet(null);
           }}
         />
 
@@ -184,6 +209,7 @@ const App = () => {
             textureMap={sunMap} 
             speed={speed} 
             rotationalScale={0.04}
+            focusedPlanet={focusedPlanet}
             onPlanetClick={handlePlanetClick}
           />
 
@@ -197,7 +223,10 @@ const App = () => {
             orbitalScale={1 / 88} 
             radius={baseScale * 45} 
             ring={orbitalRingVisibility}
+            focusedPlanet={focusedPlanet}
             onPlanetClick={handlePlanetClick}
+            updatePosition={(position, size, angle, radius) => 
+              updatePlanetPosition("Mercury", position, size, angle, radius)}
           />
 
           {/* Venus */}
@@ -210,7 +239,10 @@ const App = () => {
             orbitalScale={1 / 224} 
             radius={baseScale * 84} 
             ring={orbitalRingVisibility}
+            focusedPlanet={focusedPlanet}
             onPlanetClick={handlePlanetClick}
+            updatePosition={(position, size, angle, radius) => 
+              updatePlanetPosition("Venus", position, size, angle, radius)}
           />
 
           {/* Earth */}
@@ -223,7 +255,10 @@ const App = () => {
             orbitalScale={1 / 365} 
             radius={baseScale * 117} 
             ring={orbitalRingVisibility}
+            focusedPlanet={focusedPlanet}
             onPlanetClick={handlePlanetClick}
+            updatePosition={(position, size, angle, radius) => 
+              updatePlanetPosition("Earth", position, size, angle, radius)}
           />
 
         </Suspense>

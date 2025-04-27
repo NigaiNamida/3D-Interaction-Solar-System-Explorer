@@ -14,7 +14,7 @@ const Planet = ({
   name, 
   focusedPlanet,
   onPlanetClick,
-
+  updatePosition
 }) => {
     const ref = useRef();
     const ringRef = useRef();
@@ -22,7 +22,7 @@ const Planet = ({
     const [hovered, setHovered] = useState(false);
     const { camera } = useThree();
 
-    const orbitalRingWidth = 0.015
+    const orbitalRingWidth = 0.015;
 
     useCursor(hovered);
 
@@ -33,6 +33,13 @@ const Planet = ({
             ref.current.position.x = Math.cos(angle.current) * radius;
             ref.current.position.z = Math.sin(angle.current) * radius;
         }
+
+        const position = {
+            x: ref.current.position.x,
+            y: ref.current.position.y,
+            z: ref.current.position.z
+        };
+        updatePosition(position, size, angle, radius);
 
         if (ringRef.current) {
             ringRef.current.lookAt(camera.position);
@@ -46,7 +53,7 @@ const Planet = ({
                 y: ref.current.position.y,
                 z: ref.current.position.z
             };
-            onPlanetClick(name, position, size);
+            onPlanetClick(name, position, size, angle, radius);
         }
     };
 
@@ -67,7 +74,7 @@ const Planet = ({
                 {(hovered || focusedPlanet === name) && (
                 <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
                     <torusGeometry args={[size * 1, size * 0.5, 2, 64]} />
-                    <meshBasicMaterial color="white" opacity={0.75} transparent />
+                    <meshBasicMaterial color="yellow"/>
                 </mesh>
                 )}
             </group>
