@@ -5,6 +5,7 @@
   margin: 0;
   padding: 0;
   font-family: system-ui;;
+  overflow: hidden;
 }
 
 .navbar {
@@ -72,4 +73,58 @@
   text-align: center;
   font-size: 17.5px;
   height: 50%;
+}
+
+.planet-info-popup {
+  position: absolute;
+  align-items: center;
+  text-align: center;
+  left: 0;
+  right: 0;
+  background-color: rgba(5, 5, 5, 0.8);
+  color: white;
+  padding-bottom: 100px;
+  transition: bottom 0.5s ease-in-out;
+  box-shadow: 0 -5px 15px rgba(15, 15, 15, 0.5);
+  max-height: 7.5%;
+  bottom: -20%;;
+}
+
+.planet-info-popup.visible {
+  bottom: 0;
+}
+
+.planet-info-popup h2 {
+  color: #30a7ff;
+  font-size: 24px;
+  padding-top: 30px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.planet-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.stat {
+  width: 33%;
+  display: block;
+}
+
+.label {
+  font-weight: 400;
+  color: #aaccff;
+}
+
+.value {
+  font-weight: 500;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .stat {
+    width: 100%;
+  }
 }

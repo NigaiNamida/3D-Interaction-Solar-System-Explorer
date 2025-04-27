@@ -7,6 +7,7 @@ import './App.css';
 import Camera from './components/Camera';
 import Sun from './components/Sun';
 import Planet from './components/Planet';
+import PlanetInfo from './components/Planet_Info';
 
 const App = () => {
   const sunMap = useLoader(TextureLoader, 'sun-texture.jpg');
@@ -180,7 +181,7 @@ const App = () => {
           />
         </div>
         <div className="focused-planet">
-          Viewing : {focusedPlanet === null ? 'None' : focusedPlanet}
+          Following : {focusedPlanet === null ? 'None' : focusedPlanet}
         </div>
       </nav>
             
@@ -263,6 +264,11 @@ const App = () => {
 
         </Suspense>
       </Canvas>
+
+      <PlanetInfo 
+        focusedPlanet={focusedPlanet} 
+      />
+
     </div>
   );
 };

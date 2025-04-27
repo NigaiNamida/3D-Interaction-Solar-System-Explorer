@@ -74,7 +74,7 @@ const Planet = ({
                 {(hovered || focusedPlanet === name) && (
                 <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
                     <torusGeometry args={[size * 1, size * 0.5, 2, 64]} />
-                    <meshBasicMaterial color="yellow"/>
+                    <meshBasicMaterial color="lightblue"/>
                 </mesh>
                 )}
             </group>
@@ -82,7 +82,7 @@ const Planet = ({
             {/* Orbital Ring */}
             {ring && (
             <mesh rotation={[Math.PI / 2, 0, 0]}>
-                <torusGeometry args={[radius - orbitalRingWidth / 2, orbitalRingWidth + orbitalRingWidth / 2, 16, 128]} />
+                <torusGeometry args={[radius - orbitalRingWidth / 2, orbitalRingWidth + orbitalRingWidth / 2, 16, 256]} />
                 <meshBasicMaterial color="white" opacity={0.25} transparent />
             </mesh>)
             }

@@ -41,7 +41,7 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedP
             {(hovered || focusedPlanet === "Sun") && (
             <mesh rotation={[Math.PI / 2, 0, 0]} ref={ringRef}>
                 <torusGeometry args={[size * 1, size * 0.1, 2, 64]} />
-                <meshBasicMaterial color="yellow"/>
+                <meshBasicMaterial color="lightblue"/>
             </mesh>
             )}
         </group>
