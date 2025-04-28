@@ -195,7 +195,7 @@ const App = () => {
         </div>
 
         <div className="focused-planet">
-          Following : {FOCUSED_PLANET ? 'None' : FOCUSED_PLANET}
+          Following : {FOCUSED_PLANET ? FOCUSED_PLANET : 'None'}
         </div>
 
       </nav>

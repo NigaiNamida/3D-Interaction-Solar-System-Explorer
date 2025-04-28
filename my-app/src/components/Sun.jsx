@@ -33,7 +33,6 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedP
         <group position={[0, 0, 0]} ref={REF}>
 
             {/* Sun mesh */}
-
             <mesh
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
@@ -46,7 +45,6 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedP
             </mesh>
 
             {/* highlight when hovered of focused  */}
-            
             {(HOVERED || focusedPlanet === "Sun") && (
             <mesh rotation={[Math.PI / 2, 0, 0]} ref={RING_REF}>
 

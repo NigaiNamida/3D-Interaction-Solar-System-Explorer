@@ -63,8 +63,7 @@ const Planet = ({
         <>
             <group ref={REF}>
 
-                {/* planet mesh */}
-                
+                {/* planet mesh */}             
                 <mesh
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
@@ -76,7 +75,6 @@ const Planet = ({
                 </mesh>
 
                 {/* highlight when hovered of focused */}
-
                 {(HOVERED || focusedPlanet === name) && (
                 <mesh rotation={[Math.PI / 2, 0, 0]} ref={RING_REF}>
 
@@ -96,7 +94,6 @@ const Planet = ({
             </group>
 
             {/* Orbital Ring */}
-
             {isObitalRingVisible && (
             <mesh rotation={[Math.PI / 2, 0, 0]}>
 
