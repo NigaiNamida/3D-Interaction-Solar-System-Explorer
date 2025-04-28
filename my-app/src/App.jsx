@@ -40,8 +40,9 @@ const App = () => {
     setPlanetRadius(prev => ({...prev, [name]: radius}));
   }, []);
 
+  //Camera follows fosuced planet
   useEffect(() => {
-    if (CAMERA_REF.current && CONTROLS_REF.current && !IS_RESETTING && FOCUSED_PLANET !== null && FOCUSED_PLANET !== "Sun") {
+    if (CAMERA_REF.current && CONTROLS_REF.current && !IS_RESETTING && FOCUSED_PLANET && FOCUSED_PLANET !== "Sun") {
       
       const position = PLANET_POSITION[FOCUSED_PLANET];
       const angle = PLANET_ANGLE[FOCUSED_PLANET];
@@ -64,6 +65,7 @@ const App = () => {
     }
   },);
 
+  //Camera reset transition
   const handleResetCamera = () => {
     if (CAMERA_REF.current && CONTROLS_REF.current && !IS_RESETTING) {
       setIsResetting(true);
@@ -98,6 +100,7 @@ const App = () => {
     }
   };
 
+  //Camera focus transition
   const handlePlanetClick = useCallback((name, position, size, angle, radius) => {
     if (CAMERA_REF.current && CONTROLS_REF.current) {
       setIsResetting(true);
@@ -160,6 +163,7 @@ const App = () => {
     }
   },);
 
+  //Toggle Orbital ring visibility
   const handleToggleOrbitalRing = () => {
     setIsOrbitalRingVisible((prev) => !prev);
   };
@@ -167,16 +171,20 @@ const App = () => {
   return (
     <div>
       <nav className="navbar">
+
         <span className="navname">🌌 3D Interactive Solar System Explorer</span>
+
         <button className="reset-button" onClick={handleResetCamera}>
           {IS_RESETTING ? 'Camera\'s Moving...' : 'Reset Camera'}  
         </button>
+
         <button className="toggle-button" onClick={handleToggleOrbitalRing}>
           {IS_ORBITAL_RING_VISIBLE ? 'Hide Orbital Rings' : 'Show Orbital Rings'}
         </button>
-        <div className="speed-slider">
+
+        <div className="speed">
           <span className="speed-value">Speed x{SPEED}</span>
-          <input className='speed-bar'
+          <input className='speed-slider'
             type="range" 
             min="0" 
             max={SPEED_OPTIONS.length - 1} 
@@ -185,16 +193,19 @@ const App = () => {
             onChange={(e) => setSpeed(SPEED_OPTIONS[parseInt(e.target.value)])}
           />
         </div>
+
         <div className="focused-planet">
-          Following : {FOCUSED_PLANET === null ? 'None' : FOCUSED_PLANET}
+          Following : {FOCUSED_PLANET ? 'None' : FOCUSED_PLANET}
         </div>
+
       </nav>
 
-      <span className="camera-tip1">Left-Click & drag to rotate camera</span>
-      <span className="camera-tip2">Right-Click & drag to pan camera</span>
-      <span className="camera-tip3">Scroll Mouse to zoom in & out</span>    
+      <span className="camera-tip1">Left-click & drag to rotate the camera.</span>
+      <span className="camera-tip2">Right-click & drag to pan the camera.</span>
+      <span className="camera-tip3">Scroll wheel to zoom in & out.</span>    
 
       <Canvas>
+
         <Camera 
           cameraRef={CAMERA_REF} 
           controlsRef={CONTROLS_REF} 
@@ -272,6 +283,7 @@ const App = () => {
           />
 
         </Suspense>
+        
       </Canvas>
 
       <PlanetInfo 
