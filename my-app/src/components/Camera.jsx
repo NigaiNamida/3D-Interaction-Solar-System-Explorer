@@ -1,16 +1,17 @@
 import { PerspectiveCamera, OrbitControls } from '@react-three/drei';
 
-import { CAMERA_SETTINGS } from './Data';
+import { CAMERA } from './Data';
 
 const Camera = ({ cameraRef, controlsRef, onUserControlStart }) => {  
-    const { POSITION, FOV, CONTROLS } = CAMERA_SETTINGS;
+
+    const { DEFAULT_POSITION, FOV, CONTROLS } = CAMERA;
     
     return (
         <>
             <PerspectiveCamera 
                 ref={cameraRef} 
                 makeDefault 
-                position={[POSITION.x, POSITION.y, POSITION.z]} 
+                position={[DEFAULT_POSITION.x, DEFAULT_POSITION.y, DEFAULT_POSITION.z]} 
                 fov={FOV} 
             />
 

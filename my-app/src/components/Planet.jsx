@@ -108,7 +108,7 @@ const Planet = ({
                         ORBITAL_RING.SEGMENTS.TUBULAR
                     ]} 
                 />
-                <meshBasicMaterial color="white" opacity={0.25} transparent />
+                <meshBasicMaterial color="white" opacity={ORBITAL_RING.OPACITY} transparent />
 
             </mesh>)
             }

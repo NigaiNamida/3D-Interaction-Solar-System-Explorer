@@ -4,12 +4,12 @@ import { TextureLoader } from 'three';
 import { gsap } from 'gsap';
 import './App.css';
 
-import { SOLAR_SYSTEM, SPEED_OPTIONS, DEFAULT_SPEED } from './components/Data';
+import { SOLAR_SYSTEM, SPEED_OPTIONS, DEFAULT_SPEED, CAMERA } from './components/Data';
 
 import Camera from './components/Camera';
 import Sun from './components/Sun';
 import Planet from './components/Planet';
-import PlanetInfo from './components/Planet_Info';
+import PlanetInfo from './components/Info_Popup';
 
 const App = () => {
   const SUN_MAP = useLoader(TextureLoader, 'sun-texture.jpg');
@@ -31,7 +31,7 @@ const App = () => {
   const [SPEED, setSpeed] = useState(DEFAULT_SPEED);
   const [FOCUSED_PLANET, setFocusedPlanet] = useState(null);
   
-  const { BASE_SCALE, CAMERA, PLANET_CAMERA } = SOLAR_SYSTEM;
+  const { BASE_SCALE, PLANET_CAMERA } = SOLAR_SYSTEM;
 
   const updatePlanetPosition = useCallback((name, position, size, angle, radius) => {
     setPlanetPosition(prev => ({...prev, [name]: position}));
@@ -62,7 +62,7 @@ const App = () => {
   
       CONTROLS_REF.current.update();
     }
-  }, [FOCUSED_PLANET, IS_RESETTING, PLANET_POSITION, PLANET_ANGLE, PLANET_RADIUS, PLANET_SIZE, BASE_SCALE, PLANET_CAMERA.DISTANCE_MULTIPLIER, PLANET_CAMERA.HEIGHT_MULTIPLIER]);
+  },);
 
   const handleResetCamera = () => {
     if (CAMERA_REF.current && CONTROLS_REF.current && !IS_RESETTING) {
@@ -85,6 +85,7 @@ const App = () => {
         duration: CAMERA.TRANSITION_DURATION,
         ease: CAMERA.TRANSITION_EASE,
       }, 0)
+
       .to(CONTROLS_REF.current.target, {
         x: CAMERA.DEFAULT_TARGET.x,
         y: CAMERA.DEFAULT_TARGET.y,
@@ -127,6 +128,7 @@ const App = () => {
           duration: CAMERA.TRANSITION_DURATION,
           ease: CAMERA.TRANSITION_EASE,
         }, 0)
+
         .to(CONTROLS_REF.current.target, {
           x: position.x,
           y: position.y,
@@ -135,6 +137,7 @@ const App = () => {
           ease: CAMERA.TRANSITION_EASE,
         }, 0);
       }
+
       else {
         tl.to(CAMERA_REF.current.position, {
           x: cameraOffset.x,
@@ -143,6 +146,7 @@ const App = () => {
           duration: CAMERA.TRANSITION_DURATION,
           ease: CAMERA.TRANSITION_EASE,
         }, 0)
+
         .to(CONTROLS_REF.current.target, {
           x: position.x,
           y: position.y,
@@ -154,7 +158,7 @@ const App = () => {
       
       RESET_TWEEN.current = tl;
     }
-  }, [BASE_SCALE, PLANET_CAMERA.DISTANCE_MULTIPLIER, PLANET_CAMERA.HEIGHT_MULTIPLIER, CAMERA.TRANSITION_DURATION, CAMERA.TRANSITION_EASE]);
+  },);
 
   const handleToggleOrbitalRing = () => {
     setIsOrbitalRingVisible((prev) => !prev);
@@ -172,7 +176,7 @@ const App = () => {
         </button>
         <div className="speed-slider">
           <span className="speed-value">Speed x{SPEED}</span>
-          <input 
+          <input className='speed-bar'
             type="range" 
             min="0" 
             max={SPEED_OPTIONS.length - 1} 
@@ -204,7 +208,7 @@ const App = () => {
           }}
         />
 
-        <pointLight position={[0, 0, 0]} intensity={1000} />
+        <pointLight position={[0, 0, 0]} intensity={1500} />
         <ambientLight intensity={0.25} />
 
         <Suspense fallback={null}>

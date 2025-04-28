@@ -45,7 +45,7 @@ const Sun = ({ size, textureMap, speed, rotationalScale, onPlanetClick, focusedP
 
             </mesh>
 
-            {/* Highlight when Hovered */}
+            {/* highlight when hovered of focused  */}
             
             {(HOVERED || focusedPlanet === "Sun") && (
             <mesh rotation={[Math.PI / 2, 0, 0]} ref={RING_REF}>

@@ -47,14 +47,13 @@
 }
 
 .speed-slider {
-  gap: 5px;
+  gap: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   font-size: 15px;
-  color: white;
   background: rgb(5, 5, 5);
 }
 
@@ -62,9 +61,9 @@
   background: rgb(5, 5, 5);
 }
 
-.speed-slider input[type="range"] {
+.speed-bar {
   cursor: pointer;
-  width: 90%;
+  width: 95%;
 }
 
 .focused-planet{
